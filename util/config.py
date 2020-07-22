@@ -73,15 +73,15 @@ def get_v2_config_path():
 
 
 def get_v2_restart_cmd():
-    return __get('v2_restart_cmd', 'systemctl restart v2ray')
+    return __get('v2_restart_cmd', 'sv restart v2ray')
 
 
 def get_v2_stop_cmd():
-    return __get('v2_stop_cmd', 'systemctl stop v2ray')
+    return __get('v2_stop_cmd', 'sv stop v2ray')
 
 
 def get_v2_start_cmd():
-    return __get('v2_start_cmd', 'systemctl start v2ray')
+    return __get('v2_start_cmd', 'sv start v2ray')
 
 
 def get_v2_config_check_interval():
@@ -146,7 +146,7 @@ def init_db(update=False):
     add_if_not_exist(Setting('v2_config_path', 'v2_config_path', '/etc/v2ray/config.json', 'text', '', False), update)
     add_if_not_exist(Setting('v2_template_config', 'v2_template_config', __read_v2_template_config(), 'textarea', '', False), update)
     add_if_not_exist(Setting('v2_config_check_interval', 'v2_config_check_interval', '10', 'int', '', True), update)
-    add_if_not_exist(Setting('v2_restart_cmd', 'v2_restart_cmd', 'systemctl restart v2ray', 'text', '', False), update)
+    add_if_not_exist(Setting('v2_restart_cmd', 'v2_restart_cmd', 'sv restart v2ray', 'text', '', False), update)
     add_if_not_exist(Setting('traffic_job_interval', 'traffic_job_interval', '30', 'int', '', True), update)
     add_if_not_exist(Setting('reset_traffic_day', 'reset_traffic_day', '0', 'int', '', True), update)
     add_if_not_exist(Setting('is_traffic_reset', 'is_traffic_reset', '0', 'int', '', False), update)
