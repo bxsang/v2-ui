@@ -1,0 +1,13 @@
+#!/bin/sh
+exec 2>&1
+
+FILE=/etc/v2ray/config.json
+if test -f "${FILE}"; then
+    echo -e  "starting v2ray..."
+    exec chpst v2ray -config ${FILE}
+else
+    echo "WARN: ${FILE} does not exist, wait 10s"
+    sleep 10
+    exit 1
+fi
+

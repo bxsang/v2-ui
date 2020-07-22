@@ -1,0 +1,4 @@
+#!/bin/sh
+exec 2>&1
+echo -e  "starting v2-ui..."
+exec chpst python3 /usr/local/v2-ui/v2-ui.py
