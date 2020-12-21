@@ -1,7 +1,13 @@
 中文 | [English](README.en.md)
-
 # v2-ui
 支持多协议多用户的 v2ray 面板，Support multi-protocol multi-user v2ray panel
+## docker使用方法
+### 运行
+ `docker-compose up -d`
+### 重置用户名密码/设置/端口
+`docker-compose exec v2-ui v2-ui.sh`
+或者
+`docker exec -it v2-ui v2-ui.sh`
 
 # 帮助翻译
 面板目前支持中文与英文，如果你发现了错误的翻译想帮助修正，或者想帮助翻译成更多的语言，可以在 translations 文件夹中找到各语言对应的翻译，例如 [translations/zh/LC_MESSAGES/message.po](translations/zh/LC_MESSAGES/messages.po) 文件是中文翻译内容。其中 msgid 是英文原文，msgstr 是翻译后的内容，每个 msgid 对应一个 msgstr。

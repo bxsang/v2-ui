@@ -1,0 +1,11 @@
+version: '3.7'
+
+services:
+  v2-ui:
+    image: sola97/v2-ui:latest
+    container_name: v2-ui
+    volumes:
+      - ./v2-ui.db:/etc/v2-ui/v2-ui.db
+      - ./v2ray:/etc/v2ray
+    restart: always
+    network_mode: host

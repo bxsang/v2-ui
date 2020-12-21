@@ -44,7 +44,7 @@ reset_user() {
         return 0
     fi
     python3 /usr/local/v2-ui/v2-ui.py resetuser &
-    SLEEP 1
+    sleep 3
     echo -e "用户名和密码已重置为 ${green}admin${plain}，现在请重启面板"
     confirm_restart
 }
@@ -58,7 +58,7 @@ reset_config() {
         return 0
     fi
     python3 /usr/local/v2-ui/v2-ui.py resetconfig &
-    SLEEP 1
+    sleep 3
     echo -e "所有面板已重置为默认值，现在请重启面板，并使用默认的 ${green}65432${plain} 端口访问面板"
     confirm_restart
 }
@@ -70,7 +70,7 @@ set_port() {
         before_show_menu
     else
         python3 /usr/local/v2-ui/v2-ui.py setport ${port} &
-        SLEEP 1
+        sleep 3
         echo -e "设置端口完毕，现在请重启面板，并使用新设置的端口 ${green}${port}${plain} 访问面板"
         confirm_restart
     fi
@@ -102,7 +102,7 @@ show_menu() {
         ;;
         3) set_port
         ;;
-        *) echo -e "${red}请输入正确的数字 [0-14]${plain}"
+        *) echo -e "${red}请输入正确的数字 [0-3]${plain}"
         ;;
     esac
 }
