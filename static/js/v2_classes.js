@@ -17,10 +17,10 @@ const VmessMethods = {
 };
 
 const SSMethods = {
-    AES_256_CFB: 'aes-256-cfb',
-    AES_128_CFB: 'aes-128-cfb',
-    CHACHA20: 'chacha20',
-    CHACHA20_IETF: 'chacha20-ietf',
+    // AES_256_CFB: 'aes-256-cfb',
+    // AES_128_CFB: 'aes-128-cfb',
+    // CHACHA20: 'chacha20',
+    // CHACHA20_IETF: 'chacha20-ietf',
     CHACHA20_POLY1305: 'chacha20-poly1305',
     AES_256_GCM: 'aes-256-gcm',
     AES_128_GCM: 'aes-128-gcm',
@@ -583,6 +583,7 @@ class Inbound extends V2CommonClass {
         } else if (network === 'kcp') {
             let kcp = this.stream.kcp;
             type = kcp.type;
+            path = kcp.seed;
         } else if (network === 'ws') {
             let ws = this.stream.ws;
             path = ws.path;
@@ -622,8 +623,87 @@ class Inbound extends V2CommonClass {
         return 'vmess://' + Inbound.base64(JSON.stringify(obj, null, 2));
     }
 
+    genVLESSLink(address = '') {
+        const settings = this.settings;
+        const uuid = settings.vlesses[0].id;
+        const port = this.port;
+        const type = this.stream.network;
+        const params = new Map();
+        params.set("type", this.stream.network);
+        params.set("security", this.stream.security);
+        switch (type) {
+            case "tcp":
+                const tcp = this.stream.tcp;
+                if (tcp.type === 'http') {
+                    const request = tcp.request;
+                    params.set("path", request.path.join(','));
+                    const index = request.headers.findIndex(header => header.name.toLowerCase() === 'host');
+                    if (index >= 0) {
+                        const host = request.headers[index].value;
+                        params.set("host", host);
+                    }
+                }
+                break;
+            case "kcp":
+                const kcp = this.stream.kcp;
+                params.set("headerType", kcp.type);
+                params.set("seed", kcp.seed);
+                break;
+            case "ws":
+                const ws = this.stream.ws;
+                params.set("path", ws.path);
+                const index = ws.headers.findIndex(header => header.name.toLowerCase() === 'host');
+                if (index >= 0) {
+                    const host = ws.headers[index].value;
+                    params.set("host", host);
+                }
+                break;
+            case "http":
+                const http = this.stream.http;
+                params.set("path", http.path);
+                params.set("host", http.host);
+                break;
+            case "quic":
+                const quic = this.stream.quic;
+                params.set("quicSecurity", quic.security);
+                params.set("key", quic.key);
+                params.set("headerType", quic.type);
+                break;
+        }
+
+        if (this.stream.security === 'tls') {
+            if (!isEmpty(this.stream.tls.server)) {
+                address = this.stream.tls.server;
+                params.set("sni", address);
+            }
+        }
+
+        for (const [key, value] of params) {
+            switch (key) {
+                case "host":
+                case "path":
+                case "seed":
+                case "key":
+                case "alpn":
+                    params.set(key, encodeURIComponent(value));
+                    break;
+            }
+        }
+
+        const link = `vless://${uuid}@${address}:${port}`;
+        const url = new URL(link);
+        for (const [key, value] of params) {
+            url.searchParams.set(key, value)
+        }
+        return url.toString();
+    }
+
     genSSLink(address='') {
         let settings = this.settings;
+        const server = this.stream.tls.server;
+        if (!isEmpty(server)) {
+            address = server;
+        }
         return 'ss://' + Inbound.safeBase64(settings.method + ':' + settings.password + '@' + address + ':' + this.port)
             + '#' + encodeURIComponent(this.remark);
     }
@@ -636,6 +716,7 @@ class Inbound extends V2CommonClass {
     genLink(address='') {
         switch (this.protocol) {
             case Protocols.VMESS: return this.genVmessLink(address);
+            case Protocols.VLESS: return this.genVLESSLink(address);
             case Protocols.SHADOWSOCKS: return this.genSSLink(address);
             case Protocols.TROJAN: return this.genTrojanLink(address);
             default: return '';
