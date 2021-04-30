@@ -22,7 +22,7 @@ confirm() {
 }
 
 confirm_restart() {
-    confirm "是否重启面板，重启面板也会重启 v2ray" "y"
+    confirm "是否重启面板，重启面板也会重启 x2ray" "y"
     if [[ $? == 0 ]]; then
         restart
     else
