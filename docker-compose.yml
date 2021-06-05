@@ -2,7 +2,7 @@ version: '3.7'
 
 services:
   v2-ui:
-    image: sola97/v2-ui:latest
+    build: .
     container_name: v2-ui
     volumes:
       - ./v2-ui.db:/etc/v2-ui/v2-ui.db
